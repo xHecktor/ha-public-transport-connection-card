@@ -195,6 +195,20 @@ class PublicTransportDepartureCard extends PublicTransprtAbstractCard {
         return css`
             ${super.styles}
 
+            :host {
+                /*
+                 * Schriftgrößen-Variablen -- alle hier anpassbar:
+                 *
+                 * --ptc-title-font-size            Kartentitel (geerbt von abstract-card)
+                 * --ptcd-first-departure-font-size  Erste Abfahrt: Zeit + Zug (große Zeile)
+                 * --ptcd-first-platform-font-size   Erste Abfahrt: Gleisnummer rechts
+                 * --ptcd-next-departure-font-size   Alle Folgezeilen
+                 */
+                --ptcd-first-departure-font-size: 1em;
+                --ptcd-first-platform-font-size: 1.2em;
+                --ptcd-next-departure-font-size: 0.85em;
+            }
+
             .ptd-main {
                 display: flex;
                 width: 100%;
@@ -247,17 +261,18 @@ class PublicTransportDepartureCard extends PublicTransprtAbstractCard {
             }
 
             .ptcd-first-departure > .ptcd-first-departure-section > :first-child {
-                font-size: 1.3em;
+                font-size: var(--ptcd-first-departure-font-size);
             }
+
             .ptcd-first-departure > .ptcd-first-departure-section > .ptcd-platform:first-child:last-child {
                 display: flex;
                 height: 100%;
                 align-items: center;
-                font-size: 2em;
+                font-size: var(--ptcd-first-platform-font-size);
             }
 
             .ptcd-next-departure {
-                font-size: 0.85em;
+                font-size: var(--ptcd-next-departure-font-size);
                 opacity: 0.9;
             }
 
