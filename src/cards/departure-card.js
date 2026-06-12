@@ -279,6 +279,7 @@ class PublicTransportDepartureCard extends PublicTransprtAbstractCard {
             .ptcd-first-departure-compact {
                 justify-content: space-between;
                 gap: var(--public-transport-card-inner-padding);
+                font-size: var(--ptcd-first-departure-font-size);
             }
 
             .ptcd-first-departure-compact .ptcd-time-departure,
