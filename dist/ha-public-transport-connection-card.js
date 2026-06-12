@@ -29,7 +29,7 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
             h1 {
                 font-family: var(--ha-card-header-font-family, inherit);
                 font-size: var(--ptc-title-font-size);
-                font-weight: 400;
+                font-weight: var(--ptc-title-font-weight, 700);
                 margin: var(--ptc-title-margin-top) calc(var(--public-transport-card-inner-padding) * 1.5) var(--ptc-title-margin-bottom);
             }
 
