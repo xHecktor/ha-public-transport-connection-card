@@ -165,6 +165,9 @@ class PublicTransprtAbstractCard extends LitElement {
                 --public-transport-card-size: 10px;
 
                 --public-transport-card-inner-padding: var(--public-transport-card-size);
+
+                /* Schriftgrößen-Variablen */
+                --ptc-title-font-size: 16px;
             }
 
             ha-card {
@@ -181,7 +184,7 @@ class PublicTransprtAbstractCard extends LitElement {
 
             h1 {
                 font-family: var(--ha-card-header-font-family, inherit);
-                font-size: var(--ha-card-header-font-size, 24px);
+                font-size: var(--ptc-title-font-size);
                 font-weight: 400;
                 margin: calc(var(--public-transport-card-inner-padding) * 2) calc(var(--public-transport-card-inner-padding) * 1.5) calc(var(--public-transport-card-inner-padding) / 2);
             }
