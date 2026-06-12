@@ -8,6 +8,10 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
 
                 /* Schriftgrößen-Variablen */
                 --ptc-title-font-size: 16px;
+
+                /* Titel-Abstände */
+                --ptc-title-margin-top: calc(var(--public-transport-card-inner-padding) * 2);
+                --ptc-title-margin-bottom: calc(var(--public-transport-card-inner-padding) / 2);
             }
 
             ha-card {
@@ -26,7 +30,7 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
                 font-family: var(--ha-card-header-font-family, inherit);
                 font-size: var(--ptc-title-font-size);
                 font-weight: 400;
-                margin: calc(var(--public-transport-card-inner-padding) * 2) calc(var(--public-transport-card-inner-padding) * 1.5) calc(var(--public-transport-card-inner-padding) / 2);
+                margin: var(--ptc-title-margin-top) calc(var(--public-transport-card-inner-padding) * 1.5) var(--ptc-title-margin-bottom);
             }
 
             /* Themes */
