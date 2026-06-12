@@ -189,7 +189,7 @@ class PublicTransprtAbstractCard extends LitElement {
             h1 {
                 font-family: var(--ha-card-header-font-family, inherit);
                 font-size: var(--ptc-title-font-size);
-                font-weight: 400;
+                font-weight: var(--ptc-title-font-weight, 700);
                 margin: var(--ptc-title-margin-top) calc(var(--public-transport-card-inner-padding) * 1.5) var(--ptc-title-margin-bottom);
             }
 
