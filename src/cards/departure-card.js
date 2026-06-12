@@ -1,3 +1,4 @@
+
 /**
  * @typedef {CardConfig&{
  *    layout: string,
