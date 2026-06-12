@@ -168,6 +168,10 @@ class PublicTransprtAbstractCard extends LitElement {
 
                 /* Schriftgrößen-Variablen */
                 --ptc-title-font-size: 16px;
+
+                /* Titel-Abstände */
+                --ptc-title-margin-top: calc(var(--public-transport-card-inner-padding) * 2);
+                --ptc-title-margin-bottom: calc(var(--public-transport-card-inner-padding) / 2);
             }
 
             ha-card {
@@ -186,7 +190,7 @@ class PublicTransprtAbstractCard extends LitElement {
                 font-family: var(--ha-card-header-font-family, inherit);
                 font-size: var(--ptc-title-font-size);
                 font-weight: 400;
-                margin: calc(var(--public-transport-card-inner-padding) * 2) calc(var(--public-transport-card-inner-padding) * 1.5) calc(var(--public-transport-card-inner-padding) / 2);
+                margin: var(--ptc-title-margin-top) calc(var(--public-transport-card-inner-padding) * 1.5) var(--ptc-title-margin-bottom);
             }
 
             /* Themes */
