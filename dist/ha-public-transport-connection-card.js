@@ -285,6 +285,35 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
                 font-size: var(--ptcd-first-platform-font-size);
             }
 
+            .ptcd-first-departure-compact {
+                justify-content: space-between;
+                gap: var(--public-transport-card-inner-padding);
+            }
+
+            .ptcd-first-departure-compact .ptcd-time-departure,
+            .ptcd-first-departure-compact .ptcd-time-departure-offset,
+            .ptcd-first-departure-compact .ptcd-train,
+            .ptcd-first-departure-compact .ptcd-platform {
+                flex: 1;
+            }
+
+            .ptcd-first-departure-compact .ptcd-direction {
+                flex: 2;
+                white-space: nowrap;
+            }
+
+            .ptcd-first-departure-compact .ptcd-next-stations {
+                flex: 3;
+                flex-shrink: 2;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .ptcd-first-departure-compact .ptcd-platform:last-child {
+                text-align: right;
+            }
+
             .ptcd-next-departure {
                 font-size: var(--ptcd-next-departure-font-size);
                 opacity: 0.9;
@@ -319,9 +348,13 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
                 <div class="no-departures" @click="${ev=>this.handleAction("tap")}">
                     No departures found.
                 </div>
-            `}const nextDepartures=[...departures];const firstDeparture=layoutConfig.firstDepartureLayout?nextDepartures.shift():undefined;return html`
+            `}const nextDepartures=[...departures];const firstDeparture=layoutConfig.firstDepartureLayout?nextDepartures.shift():undefined;const firstDepartureCompact=firstDeparture&&firstDeparture.nextStations.length===0;return html`
             <div class="ptcd-main ptcd-layout-${this.config.layout}" @click="${ev=>this.handleAction("tap")}">
-                ${layoutConfig.firstDepartureLayout&&firstDeparture?html`
+                ${layoutConfig.firstDepartureLayout&&firstDeparture?firstDepartureCompact?html`
+                    <div class="ptcd-row ptcd-first-departure ptcd-first-departure-compact ${firstDeparture.isCancelled?"ptcd-is-cancelled":""}">
+                        ${layoutConfig.columns.map(column=>this._renderColumn(firstDeparture,column))}
+                    </div>
+                `:html`
                     <div class="ptcd-row ptcd-first-departure ${firstDeparture.isCancelled?"ptcd-is-cancelled":""}">
                         ${layoutConfig.firstDepartureLayout.map(row=>html`
                             <div class="ptcd-first-departure-section ${row.length===0?"ptcd-spacer":""}">
