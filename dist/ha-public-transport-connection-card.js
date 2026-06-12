@@ -214,6 +214,7 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
                  * --ptcd-next-departure-font-size   Alle Folgezeilen
                  */
                 --ptcd-first-departure-font-size: 1em;
+                --ptcd-first-departure-second-font-size: 0.85em;
                 --ptcd-first-platform-font-size: 1.2em;
                 --ptcd-next-departure-font-size: 0.85em;
             }
@@ -271,6 +272,10 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
 
             .ptcd-first-departure > .ptcd-first-departure-section > :first-child {
                 font-size: var(--ptcd-first-departure-font-size);
+            }
+
+            .ptcd-first-departure > .ptcd-first-departure-section > :last-child:not(:first-child) {
+                font-size: var(--ptcd-first-departure-second-font-size);
             }
 
             .ptcd-first-departure > .ptcd-first-departure-section > .ptcd-platform:first-child:last-child {
