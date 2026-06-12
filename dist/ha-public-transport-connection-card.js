@@ -1,10 +1,13 @@
-import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.js?module";function ptcDelayToMinutes(delay){if(typeof delay==="number"){return delay}if(typeof delay==="string"&&delay.includes(":")){const delayParts=delay.split(":");const hours=parseInt(delayParts[0])||0;const minutes=parseInt(delayParts[1])||0;return hours*60+minutes}return parseInt(delay)||0}function ptcTimeToStr(time){const parse=Date.parse(time);return parse?new Date(parse).toLocaleTimeString([],{timeStyle:"short"}):time}function ptcTimeOffset(time,delay){const[targetHours,targetMinutes]=time.split(":").map(Number);const now=new Date;const currentHours=now.getHours();const currentMinutes=now.getMinutes();const currentTotalMinutes=currentHours*60+currentMinutes;const targetTotalMinutes=targetHours*60+targetMinutes;let offset=targetTotalMinutes-currentTotalMinutes;if(offset<-3*60){offset+=24*60}return offset+delay}function ptcParseBool(value){if(typeof value==="boolean"){return value}if(typeof value==="number"){return value!==0}if(typeof value==="string"){return value.toLowerCase()==="true"}return false}class PublicTransprtAbstractCard extends LitElement{static AVAILABLE_THEMES=["deutsche-bahn","homeassistant"];static getConfigForm(){return{schema:[{name:"entity",required:true,selector:{entity:{domain:"sensor"}}},{name:"title",selector:{text:{}}},{name:"theme",selector:{select:{options:this.AVAILABLE_THEMES,custom_value:true}}}]}}static detectDefaultConfig(defaultConfigs,entityIds,hass){const configs=Array.isArray(defaultConfigs)?defaultConfigs:Object.values(defaultConfigs);for(const defaultConfig of configs){const entityId=entityIds.find((entityId=>{const entity=hass.states[entityId];let entityChecked=false;if(defaultConfig.entityTypes){const entityType=entityId.split(".")[0];if(!defaultConfig.entityTypes.includes(entityType)){return false}entityChecked=true}if(defaultConfig.entityAttributes){let attributesExist=true;for(const attribute of defaultConfig.entityAttributes){if(entity.attributes[attribute]===undefined){attributesExist=false;break}}if(!attributesExist){return false}entityChecked=true}if(defaultConfig.isEntitySupported){return defaultConfig.isEntitySupported(entity)}if(entityChecked){return true}throw new Error("Implementation error: The default configuration object must at least provide one method for entity detection.")}));if(entityId){return defaultConfig.getConfig(hass.states[entityId])}}return undefined}static getStubConfig(hass,unusedEntities,allEntities){return{title:"",entity:"",theme:"deutsche-bahn"}}static get properties(){return{hass:{},config:{}}}static get styles(){return css`
+import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.js?module";function ptcDelayToMinutes(delay){if(typeof delay==="number"){return delay}if(typeof delay==="string"&&delay.includes(":")){const delayParts=delay.split(":");const hours=parseInt(delayParts[0])||0;const minutes=parseInt(delayParts[1])||0;return hours*60+minutes}return parseInt(delay)||0}function ptcTimeToStr(time){const parse=Date.parse(time);return parse?new Date(parse).toLocaleTimeString([],{timeStyle:"short"}):time}function ptcTimeOffset(time,delay){const[targetHours,targetMinutes]=time.split(":").map(Number);const now=new Date;const currentHours=now.getHours();const currentMinutes=now.getMinutes();const currentTotalMinutes=currentHours*60+currentMinutes;const targetTotalMinutes=targetHours*60+targetMinutes;let offset=targetTotalMinutes-currentTotalMinutes;if(offset<-3*60){offset+=24*60}return offset+delay}function ptcParseBool(value){if(typeof value==="boolean"){return value}if(typeof value==="number"){return value!==0}if(typeof value==="string"){return value.toLowerCase()==="true"}return false}class PublicTransprtAbstractCard extends LitElement{static AVAILABLE_THEMES=["deutsche-bahn","homeassistant"];static getConfigForm(){return{schema:[{name:"entity",required:true,selector:{entity:{domain:"sensor"}}},{name:"title",selector:{text:{}}},{name:"theme",selector:{select:{options:this.AVAILABLE_THEMES,custom_value:true}}}]}}static detectDefaultConfig(defaultConfigs,entityIds,hass){const configs=Array.isArray(defaultConfigs)?defaultConfigs:Object.values(defaultConfigs);for(const defaultConfig of configs){const entityId=entityIds.find(entityId=>{const entity=hass.states[entityId];let entityChecked=false;if(defaultConfig.entityTypes){const entityType=entityId.split(".")[0];if(!defaultConfig.entityTypes.includes(entityType)){return false}entityChecked=true}if(defaultConfig.entityAttributes){let attributesExist=true;for(const attribute of defaultConfig.entityAttributes){if(entity.attributes[attribute]===undefined){attributesExist=false;break}}if(!attributesExist){return false}entityChecked=true}if(defaultConfig.isEntitySupported){return defaultConfig.isEntitySupported(entity)}if(entityChecked){return true}throw new Error("Implementation error: The default configuration object must at least provide one method for entity detection.")});if(entityId){return defaultConfig.getConfig(hass.states[entityId])}}return undefined}static getStubConfig(hass,unusedEntities,allEntities){return{title:"",entity:"",theme:"deutsche-bahn"}}static get properties(){return{hass:{},config:{}}}static get styles(){return css`
             :host {
                 --public-transport-card-background-color: #EC0016;
                 --public-transport-card-foreground-color: #FFFFFF;
                 --public-transport-card-size: 10px;
 
                 --public-transport-card-inner-padding: var(--public-transport-card-size);
+
+                /* Schriftgrößen-Variablen */
+                --ptc-title-font-size: 16px;
             }
 
             ha-card {
@@ -21,7 +24,7 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
 
             h1 {
                 font-family: var(--ha-card-header-font-family, inherit);
-                font-size: var(--ha-card-header-font-size, 24px);
+                font-size: var(--ptc-title-font-size);
                 font-weight: 400;
                 margin: calc(var(--public-transport-card-inner-padding) * 2) calc(var(--public-transport-card-inner-padding) * 1.5) calc(var(--public-transport-card-inner-padding) / 2);
             }
@@ -85,7 +88,7 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
                         ${currentConnection.arrival.delay>0?html`+ ${currentConnection.arrival.delay}`:""}
                     </div>
                 </div>
-                ${connections.map((connection=>html`
+                ${connections.map(connection=>html`
                     <div class="ptc-row ptc-connection ptc-next-connection">
                         <div class="ptc-time-departure">
                             ${connection.departure.time}
@@ -97,7 +100,7 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
                             ${connection.arrival.delay>0?html`+ ${connection.arrival.delay}`:""}
                         </div>
                     </div>
-                `))}
+                `)}
             </div>
         `}modifyConfig(config){const mergedConfig={tap_action:{action:"more-info"},...config};return super.modifyConfig(mergedConfig)}getCardSize(){return 2}getLayoutOptions(){return{grid_rows:2,grid_columns:4,grid_min_rows:2,grid_min_columns:2}}static get styles(){return css`
             ${super.styles}
@@ -201,6 +204,20 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
         `}}class PublicTransportDepartureCard extends PublicTransprtAbstractCard{static FIRST_DEPARTURE_LAYOUT=[["time","train"],["direction","next_stations"],[],["platform"]];static LAYOUT_PRESETS={station_departures:{firstDepartureLayout:this.FIRST_DEPARTURE_LAYOUT,columns:["time","train","next_stations","direction","platform"],layoutOptions:{grid_rows:3,grid_columns:4,grid_min_rows:2,grid_min_columns:3}},platform_departures:{firstDepartureLayout:[["train"],["direction"],[],["offset"]],columns:["train","direction","offset"],layoutOptions:{grid_rows:2,grid_columns:4,grid_min_rows:2,grid_min_columns:2}},fixed_destination:{firstDepartureLayout:this.FIRST_DEPARTURE_LAYOUT,columns:["time","train","next_stations","platform"],layoutOptions:{grid_rows:3,grid_columns:4,grid_min_rows:2,grid_min_columns:2}}};static getConfigForm(){return{schema:[...super.getConfigForm().schema,{name:"layout",required:true,selector:{select:{options:Object.keys(this.LAYOUT_PRESETS),custom_value:false}}},{name:"departures_attribute",required:true,selector:{attribute:{entity_id:""}},context:{filter_entity:"entity"}},{name:"departure_properties",type:"grid",schema:[{name:"time",required:true,selector:{text:{}}},{name:"delay",selector:{text:{}}},{name:"cancelled",selector:{text:{}}},{name:"train",selector:{text:{}}},{name:"direction",required:true,selector:{text:{}}},{name:"platform",selector:{text:{}}},{name:"next_stations",selector:{text:{}}}]},{name:"destination_filter",selector:{text:{}}},{name:"displayed_departures",selector:{number:{min:1}}}]}}static getStubConfig(hass,unusedEntities,allEntities){const defaultConfigs={db_infoscreen:{entityTypes:["sensor"],entityAttributes:["next_departures"],getConfig:entity=>({entity:entity.entity_id,station:entity.attributes.station,departures_attribute:"next_departures",departure_properties:{time:"scheduledDeparture",delay:"delayDeparture",cancelled:"isCancelled",train:"train",direction:"destination",platform:"platform",next_stations:"via"}})}};const defaultConfig=super.detectDefaultConfig(defaultConfigs,[...unusedEntities,...allEntities],hass)||{};return{...super.getStubConfig(hass,unusedEntities,allEntities),layout:Object.keys(this.LAYOUT_PRESETS)[0],departures_attribute:"",departure_properties:{time:"",delay:"",cancelled:"",train:"",direction:"",platform:"",next_stations:""},destination_filter:"",displayed_departures:5,...defaultConfig}}static get styles(){return css`
             ${super.styles}
 
+            :host {
+                /*
+                 * Schriftgrößen-Variablen -- alle hier anpassbar:
+                 *
+                 * --ptc-title-font-size            Kartentitel (geerbt von abstract-card)
+                 * --ptcd-first-departure-font-size  Erste Abfahrt: Zeit + Zug (große Zeile)
+                 * --ptcd-first-platform-font-size   Erste Abfahrt: Gleisnummer rechts
+                 * --ptcd-next-departure-font-size   Alle Folgezeilen
+                 */
+                --ptcd-first-departure-font-size: 1em;
+                --ptcd-first-platform-font-size: 1.2em;
+                --ptcd-next-departure-font-size: 0.85em;
+            }
+
             .ptd-main {
                 display: flex;
                 width: 100%;
@@ -253,17 +270,18 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
             }
 
             .ptcd-first-departure > .ptcd-first-departure-section > :first-child {
-                font-size: 1.3em;
+                font-size: var(--ptcd-first-departure-font-size);
             }
+
             .ptcd-first-departure > .ptcd-first-departure-section > .ptcd-platform:first-child:last-child {
                 display: flex;
                 height: 100%;
                 align-items: center;
-                font-size: 2em;
+                font-size: var(--ptcd-first-platform-font-size);
             }
 
             .ptcd-next-departure {
-                font-size: 0.85em;
+                font-size: var(--ptcd-next-departure-font-size);
                 opacity: 0.9;
             }
 
@@ -300,20 +318,20 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
             <div class="ptcd-main ptcd-layout-${this.config.layout}" @click="${ev=>this.handleAction("tap")}">
                 ${layoutConfig.firstDepartureLayout&&firstDeparture?html`
                     <div class="ptcd-row ptcd-first-departure ${firstDeparture.isCancelled?"ptcd-is-cancelled":""}">
-                        ${layoutConfig.firstDepartureLayout.map((row=>html`
+                        ${layoutConfig.firstDepartureLayout.map(row=>html`
                             <div class="ptcd-first-departure-section ${row.length===0?"ptcd-spacer":""}">
-                                ${row.map((column=>this._renderColumn(firstDeparture,column)))}
+                                ${row.map(column=>this._renderColumn(firstDeparture,column))}
                             </div>
-                        `))}
+                        `)}
                     </div>
                 `:""}
-                ${nextDepartures.map((departure=>html`
+                ${nextDepartures.map(departure=>html`
                     <div class="ptcd-row ptcd-next-departure ${departure.isCancelled?"ptcd-is-cancelled":""}">
-                        ${layoutConfig.columns.map((column=>this._renderColumn(departure,column)))}
+                        ${layoutConfig.columns.map(column=>this._renderColumn(departure,column))}
                     </div>
-                `))}
+                `)}
             </div>
-        `}modifyConfig(config){const mergedConfig={tap_action:{action:"more-info"},...config};if(!mergedConfig.layout||mergedConfig.layout===""){mergedConfig.layout=Object.keys(this.constructor.LAYOUT_PRESETS)[0]}if(mergedConfig.destination_filter){if(typeof mergedConfig.destination_filter==="string"){mergedConfig.destination_filter=mergedConfig.destination_filter.split(";")}if(Array.isArray(mergedConfig.destination_filter)){mergedConfig.destination_filter=mergedConfig.destination_filter.map((filter=>filter.trim())).filter((filter=>filter!=="")).map((filter=>filter.toUpperCase()))}}return super.modifyConfig(mergedConfig)}checkConfig(config){super.checkConfig(config);if(!Object.keys(this.constructor.LAYOUT_PRESETS).includes(config.layout)){throw new Error("You must define a valid layout. Available layouts: "+Object.keys(this.constructor.LAYOUT_PRESETS).join(", "))}if(!config.departures_attribute||config.departures_attribute===""){throw new Error("You must define which attribute of the sensor holds the departures as array.")}if(!config.departure_properties){throw new Error("You must define the departure_properties.")}if(!config.departure_properties.time){throw new Error("You must define the time property for the departure entries.")}if(!config.departure_properties.direction){throw new Error("You must define the direction property for the departure entries.")}if(!config.displayed_departures||config.displayed_departures<1){throw new Error("displayed_connections must be set to 1 or higher")}if(config.destination_filter&&!Array.isArray(config.destination_filter)){throw new Error("destination_filter must be a string or an array of strings.")}}getCardSize(){return this.constructor.LAYOUT_PRESETS[this.config.layout||""].cardSize||2}getLayoutOptions(){return this.constructor.LAYOUT_PRESETS[this.config.layout||""].layoutOptions||{grid_rows:2,grid_columns:4,grid_min_rows:2,grid_min_columns:2}}_getDepartures(){const stateObj=this.hass.states[this.config.entity];const stateDepartures=stateObj.attributes[this.config.departures_attribute]||[];const departures=[];for(let i=0;i<stateDepartures.length&&departures.length<this.config.displayed_departures;i++){const stateDeparture=stateDepartures[i];const departure={time:ptcTimeToStr(stateDeparture[this.config.departure_properties.time]||""),delay:0,isCancelled:false,train:"",direction:stateDeparture[this.config.departure_properties.direction]||"",platform:"",nextStations:[]};if(this.config.departure_properties.delay){departure.delay=ptcDelayToMinutes(stateDeparture[this.config.departure_properties.delay]||0)}if(this.config.departure_properties.cancelled){departure.isCancelled=ptcParseBool(stateDeparture[this.config.departure_properties.cancelled]||false)}if(this.config.departure_properties.train){departure.train=stateDeparture[this.config.departure_properties.train]||""}if(this.config.departure_properties.platform){departure.platform=stateDeparture[this.config.departure_properties.platform]||""}if(this.config.departure_properties.next_stations){departure.nextStations=stateDeparture[this.config.departure_properties.next_stations]||[]}if(Array.isArray(this.config.destination_filter)&&this.config.destination_filter.length>0){const filters=this.config.destination_filter;let hasMatch=false;filters.forEach((filter=>{if(departure.direction.toUpperCase().includes(filter)||departure.nextStations.join("; ").toUpperCase().includes(filter)){hasMatch=true}}));if(!hasMatch){continue}}departures.push(departure)}return departures}_renderColumn(departure,columnType){switch(columnType){case"time":return html`
+        `}modifyConfig(config){const mergedConfig={tap_action:{action:"more-info"},...config};if(!mergedConfig.layout||mergedConfig.layout===""){mergedConfig.layout=Object.keys(this.constructor.LAYOUT_PRESETS)[0]}if(mergedConfig.destination_filter){if(typeof mergedConfig.destination_filter==="string"){mergedConfig.destination_filter=mergedConfig.destination_filter.split(";")}if(Array.isArray(mergedConfig.destination_filter)){mergedConfig.destination_filter=mergedConfig.destination_filter.map(filter=>filter.trim()).filter(filter=>filter!=="").map(filter=>filter.toUpperCase())}}return super.modifyConfig(mergedConfig)}checkConfig(config){super.checkConfig(config);if(!Object.keys(this.constructor.LAYOUT_PRESETS).includes(config.layout)){throw new Error("You must define a valid layout. Available layouts: "+Object.keys(this.constructor.LAYOUT_PRESETS).join(", "))}if(!config.departures_attribute||config.departures_attribute===""){throw new Error("You must define which attribute of the sensor holds the departures as array.")}if(!config.departure_properties){throw new Error("You must define the departure_properties.")}if(!config.departure_properties.time){throw new Error("You must define the time property for the departure entries.")}if(!config.departure_properties.direction){throw new Error("You must define the direction property for the departure entries.")}if(!config.displayed_departures||config.displayed_departures<1){throw new Error("displayed_connections must be set to 1 or higher")}if(config.destination_filter&&!Array.isArray(config.destination_filter)){throw new Error("destination_filter must be a string or an array of strings.")}}getCardSize(){return this.constructor.LAYOUT_PRESETS[this.config.layout||""].cardSize||2}getLayoutOptions(){return this.constructor.LAYOUT_PRESETS[this.config.layout||""].layoutOptions||{grid_rows:2,grid_columns:4,grid_min_rows:2,grid_min_columns:2}}_getDepartures(){const stateObj=this.hass.states[this.config.entity];const stateDepartures=stateObj.attributes[this.config.departures_attribute]||[];const departures=[];for(let i=0;i<stateDepartures.length&&departures.length<this.config.displayed_departures;i++){const stateDeparture=stateDepartures[i];const departure={time:ptcTimeToStr(stateDeparture[this.config.departure_properties.time]||""),delay:0,isCancelled:false,train:"",direction:stateDeparture[this.config.departure_properties.direction]||"",platform:"",nextStations:[]};if(this.config.departure_properties.delay){departure.delay=ptcDelayToMinutes(stateDeparture[this.config.departure_properties.delay]||0)}if(this.config.departure_properties.cancelled){departure.isCancelled=ptcParseBool(stateDeparture[this.config.departure_properties.cancelled]||false)}if(this.config.departure_properties.train){departure.train=stateDeparture[this.config.departure_properties.train]||""}if(this.config.departure_properties.platform){departure.platform=stateDeparture[this.config.departure_properties.platform]||""}if(this.config.departure_properties.next_stations){departure.nextStations=stateDeparture[this.config.departure_properties.next_stations]||[]}if(Array.isArray(this.config.destination_filter)&&this.config.destination_filter.length>0){const filters=this.config.destination_filter;let hasMatch=false;filters.forEach(filter=>{if(departure.direction.toUpperCase().includes(filter)||departure.nextStations.join("; ").toUpperCase().includes(filter)){hasMatch=true}});if(!hasMatch){continue}}departures.push(departure)}return departures}_renderColumn(departure,columnType){switch(columnType){case"time":return html`
                     <div class="ptcd-time-departure">
                         ${departure.time}
                         ${departure.delay>0?html`+ ${departure.delay}`:""}
