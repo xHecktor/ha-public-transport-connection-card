@@ -220,6 +220,7 @@ import{LitElement,html,css}from"https://unpkg.com/lit-element@2.0.1/lit-element.
                 --ptcd-first-departure-font-size: 1em;
                 --ptcd-first-departure-second-font-size: 0.85em;
                 --ptcd-first-platform-font-size: 1.2em;
+                --ptcd-first-departure-margin-top: var(--public-transport-card-inner-padding);
                 --ptcd-next-departure-font-size: 0.85em;
             }
 
