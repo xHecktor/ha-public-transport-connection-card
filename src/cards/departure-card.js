@@ -207,6 +207,7 @@ class PublicTransportDepartureCard extends PublicTransprtAbstractCard {
                 --ptcd-first-departure-font-size: 1em;
                 --ptcd-first-departure-second-font-size: 0.85em;
                 --ptcd-first-platform-font-size: 1.2em;
+                --ptcd-first-departure-margin-top: var(--public-transport-card-inner-padding);
                 --ptcd-next-departure-font-size: 0.85em;
             }
 
